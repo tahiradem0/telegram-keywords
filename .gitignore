@@ -1,0 +1,33 @@
+# Dependencies
+npm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+node_modules
+.env
+
+# Generated files
+userDatabase.json
+detected-messages/
+user-sessions/
+*.session
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# OS generated files
+.DS_Store
+Thumbs.db
