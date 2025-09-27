@@ -3,6 +3,7 @@ const { Api } = require("telegram"); // add this at the top
 const { TelegramClient } = require("telegram");
 const { StringSession } = require("telegram/sessions");
 const fs = require("fs").promises;
+const path = require('path');
 
 const apiId = 21963031; // convert to number
 const apiHash = "6fc7bbf94417d445f358eac2de624be5";          // string
@@ -81,8 +82,8 @@ class TelegramAuth {
 
         console.log(`[TelegramAuth] Verifying code for ${phoneNumber}`);
 
-        // ✅ Proper GramJS sign-in
-        await client.invoke(
+        // Use client.invoke() with Api.auth.SignIn
+        const result = await client.invoke(
             new Api.auth.SignIn({
                 phoneNumber: phoneNumber,
                 phoneCodeHash: phoneCodeHash,
@@ -92,12 +93,14 @@ class TelegramAuth {
 
         console.log('[TelegramAuth] Verification successful!');
 
-        // Save session
+        // Ensure directory exists
+        const dir = path.dirname(sessionPath);
+        await fs.mkdir(dir, { recursive: true });
+
         const sessionString = client.session.save();
         await fs.writeFile(sessionPath, sessionString);
         console.log('[TelegramAuth] Session saved to:', sessionPath);
 
-        // Clean up
         this.pendingClients.delete(userId);
 
         return {
@@ -107,12 +110,10 @@ class TelegramAuth {
 
     } catch (error) {
         console.error('[TelegramAuth] Verification error:', error);
-        return {
-            success: false,
-            error: this.parseError(error)
-        };
+        return { success: false, error: this.parseError(error) };
     }
 }
+
 
 
     parseError(error) {
